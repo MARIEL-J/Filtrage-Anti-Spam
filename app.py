@@ -1,66 +1,54 @@
 import streamlit as st
 import pickle
+import string
+from nltk.corpus import stopwords
+import nltk
+from nltk.stem.porter import PorterStemmer
 
-# Load the pre-trained model and vectorizer
-try:
-    model = pickle.load(open('model.pkl', 'rb'))
-    cv = pickle.load(open('vectorizer.pkl', 'rb'))
-except FileNotFoundError as e:
-    st.error(f"Erreur de fichier non trouvé : {e}")
-except Exception as e:
-    st.error(f"Erreur inconnue lors du chargement des fichiers : {e}")
+ps = PorterStemmer()
 
 
+def transform_text(text):
+    text = text.lower()
+    text = nltk.word_tokenize(text)
 
-# Set up the Streamlit app
-st.title("📧 Application de filtrage anti-spam")
-st.write(
-    """
-    Bienvenue dans l'application de classification des emails !  
-    Cette application utilise l'apprentissage automatique pour déterminer si un email est **Spam** ou **Non-Spam (Ham)**.  
-    """
-)
+    y = []
+    for i in text:
+        if i.isalnum():
+            y.append(i)
 
-# Input area for the user
-st.subheader("Classification")
-user_input = st.text_area("Entrez le texte de l'email ci-dessous pour classification:", height=150)
+    text = y[:]
+    y.clear()
 
-# Classify button
-if st.button("Classer"):
-    if user_input.strip():  # Check if input is not empty
-        # Preprocess and predict
-        try:
-            data = [user_input]
-            vec = cv.transform(data).toarray()  # Transform input using the vectorizer
-            result = model.predict(vec)  # Predict using the loaded model
-            
-            # Display the result
-            if result[0] == 0:
-                st.success("✅ Ce n'est pas un email Spam !")
-            else:
-                st.error("🚨 C'est un email SPAM !")
-        except Exception as e:
-            st.error(f"Une erreur s'est produite lors de la classification : {e}")
+    for i in text:
+        if i not in stopwords.words('english') and i not in string.punctuation:
+            y.append(i)
+
+    text = y[:]
+    y.clear()
+
+    for i in text:
+        y.append(ps.stem(i))
+
+    return " ".join(y)
+
+
+tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
+model = pickle.load(open('model.pkl', 'rb'))
+
+st.title("Email/SMS Spam Classifier")
+
+input_sms = st.text_area("Enter the message")
+
+if st.button('Predict'):
+    # 1. preprocess
+    transformed_sms = transform_text(input_sms)
+    # 2. vectorize
+    vector_input = tfidf.transform([transformed_sms])
+    # 3. predict
+    result = model.predict(vector_input)[0]
+    # 4. Display
+    if result == 1:
+        st.header("Spam")
     else:
-        st.warning("⚠️ Veuillez entrer le texte de l'email avant de classer.")
-
-# Texte de copyright en bas de la page
-st.markdown(
-    """
-    <style>
-        .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 10px;
-            font-size: 12px;
-            color: #555;
-        }
-    </style>
-    <div class="footer">
-        <p>© Décembre 2024 Réalisé par Jacquelin HOUNSOU & Féridia AKINDELE</p>
-    </div>
-    """, unsafe_allow_html=True)
+        st.header("Not Spam")
