@@ -6,8 +6,9 @@ try:
     model = pickle.load(open('model.pkl', 'rb'))
     cv = pickle.load(open('vectorizer.pkl', 'rb'))
 except FileNotFoundError as e:
-    st.error("Erreur lors du chargement du modèle ou du vecteur. Assurez-vous que les fichiers 'spam.pkl' et 'vectorizer.pkl' sont présents.")
-    st.stop()
+    st.error(f"Erreur de fichier non trouvé : {e}")
+except Exception as e:
+    st.error(f"Erreur inconnue lors du chargement des fichiers : {e}")
 
 
 
