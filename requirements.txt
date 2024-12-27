@@ -2,5 +2,6 @@ bokeh==3.0.0
 matplotlib==3.10.0 
 nltk==3.9.1        
 numpy==2.2.1      
-streamlit==1.25.0 
-setuptools>=66.0.0
+streamlit==1.19.0
+setuptools==65.5.0
+
