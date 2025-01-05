@@ -8,3 +8,5 @@ streamlit-option-menu==0.4.0
 pandas==2.2.2
 nltk==3.9.1
 scikit-learn==1.4.2
+langdetect==1.0.9
+deep_translator==1.11.4
