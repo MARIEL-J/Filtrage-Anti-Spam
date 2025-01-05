@@ -598,15 +598,14 @@ def page_results():
 ###################################
 
 
-# Charger la fonction sérialisée
-try:
-    with open("transformed_texts.pkl", "rb") as file:
-        transform_text = pickle.load(transformed_texts)
-except FileNotFoundError as e:
-    st.error("La fonction de transformation n'a pas pu être chargée.")
-    st.stop()
 
 def page_classify():
+    try:
+        transform_text = pickle.load(open("transformed_texts.pkl", "rb"))
+    except FileNotFoundError as e:
+    st.error("La fonction de transformation n'a pas pu être chargée.")
+    st.stop()
+    
     # Charger le modèle pré-entraîné et le vectoriseur
     try:
         model = pickle.load(open('model.pkl', 'rb'))
