@@ -603,8 +603,8 @@ def page_classify():
     try:
         transform_text = pickle.load(open("transformed_texts.pkl", "rb"))
     except FileNotFoundError as e:
-    st.error("La fonction de transformation n'a pas pu être chargée.")
-    st.stop()
+        st.error("La fonction de transformation n'a pas pu être chargée.")
+        st.stop()
     
     # Charger le modèle pré-entraîné et le vectoriseur
     try:
