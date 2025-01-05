@@ -598,69 +598,13 @@ def page_results():
 ###################################
 
 
-# Initialisation du stemmer
-ps = PorterStemmer()
-
-def transform_text(text):
-    """
-    Applique plusieurs étapes de prétraitement sur le texte fourni :
-    - Détecter la langue et traduire en anglais si nécessaire.
-    - Conversion en minuscules.
-    - Tokenisation (division du texte en mots).
-    - Suppression des mots non alphanumériques, stopwords et ponctuation.
-    - Application du stemming.
-
-    Args:
-    - text (str): Le texte à transformer.
-
-    Returns:
-    - str: Le texte transformé.
-    """
-    try:
-        # 0. Détection et traduction si le texte n'est pas en anglais
-        language = detect(text)
-        if language != "en":
-            if len(text) > 5000:  # Gestion des textes longs
-                parts = [text[i:i + 5000] for i in range(0, len(text), 5000)]
-                try:
-                    translated_parts = [
-                        GoogleTranslator(source='auto', target='en').translate(part)
-                        for part in parts
-                    ]
-                    text = " ".join(translated_parts)
-                except Exception as e:
-                    print(f"Erreur lors de la traduction d'une partie du texte : {e}")
-                    return None
-            else:
-                try:
-                    text = GoogleTranslator(source='auto', target='en').translate(text)
-                except Exception as e:
-                    print(f"Erreur lors de la traduction : {e}")
-                    return None
-
-        # 1. Conversion du texte en minuscules
-        text = text.lower()
-        
-        # 2. Tokenisation du texte
-        text = nltk.word_tokenize(text)
-        
-        # 3. Suppression des mots non alphanumériques
-        text = [word for word in text if word.isalnum()]
-        
-        # 4. Suppression des stopwords et de la ponctuation
-        stop_words = set(stopwords.words('english'))
-        text = [word for word in text if word not in stop_words and word not in string.punctuation]
-        
-        # 5. Application du stemming
-        text = [ps.stem(word) for word in text]
-        
-        # 6. Retourner le texte transformé
-        return " ".join(text)
-    
-    except Exception as e:
-        print(f"Erreur lors du traitement du texte : {e}")
-        return None
-
+# Charger la fonction sérialisée
+try:
+    with open("transformed_texts.pkl", "rb") as file:
+        transform_text = pickle.load(file)
+except FileNotFoundError as e:
+    st.error("La fonction de transformation n'a pas pu être chargée.")
+    st.stop()
 
 def page_classify():
     # Charger le modèle pré-entraîné et le vectoriseur
@@ -668,7 +612,7 @@ def page_classify():
         model = pickle.load(open('model.pkl', 'rb'))
         cv = pickle.load(open('vectorizer.pkl', 'rb'))
     except FileNotFoundError as e:
-        st.error("Erreur lors du chargement du modèle ou du vectoriseur. Veuillez vous assurer que les fichiers 'spam.pkl' et 'vectorizer.pkl' sont présents.")
+        st.error("Erreur lors du chargement du modèle ou du vectoriseur.")
         st.stop()
 
     # Configuration de l'application Streamlit
@@ -734,23 +678,19 @@ def page_classify():
     if classify_button:
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
-                # Appliquer la transformation du texte
-                st.write("Transformation du texte en cours...")
-                transformed_text = transform_text(user_input)
+                # Appliquer la fonction de transformation du texte chargée depuis le fichier pkl
+                transformed_input = transform_text(user_input)
 
-                if transformed_text:  # Vérifier si la transformation a réussi
-                    st.write(f"Texte transformé : {transformed_text[:500]}...")  # Afficher un extrait du texte transformé (pour débogage)
-                    data = [transformed_text]
-                    vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
-                    result = model.predict(vec)  # Prédire à l'aide du modèle chargé
+                # Transformer l'entrée à l'aide du vectoriseur
+                data = [transformed_input]  # Utiliser le texte transformé
+                vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
+                result = model.predict(vec)  # Prédire à l'aide du modèle chargé
 
-                    # Afficher le résultat avec couleurs personnalisées
-                    if result[0] == 0:
-                        st.markdown('<div class="result-success">✅ Ce n\'est PAS un e-mail Spam !</div>', unsafe_allow_html=True)
-                    else:
-                        st.markdown('<div class="result-error">🚨 C\'est un e-mail SPAM !</div>', unsafe_allow_html=True)
+                # Afficher le résultat avec couleurs personnalisées
+                if result[0] == 0:
+                    st.markdown('<div class="result-success">✅ Ce n\'est PAS un e-mail Spam !</div>', unsafe_allow_html=True)
                 else:
-                    st.error("Une erreur s'est produite lors de la transformation du texte.")
+                    st.markdown('<div class="result-error">🚨 C\'est un e-mail SPAM !</div>', unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"Une erreur s'est produite lors de la classification : {e}")
         else:
