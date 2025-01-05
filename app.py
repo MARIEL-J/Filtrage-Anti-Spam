@@ -658,7 +658,7 @@ def transform_text(text):
         return " ".join(text)
     
     except Exception as e:
-        print(f"Erreur lors du traitement : {e}")
+        print(f"Erreur lors du traitement du texte : {e}")
         return None
 
 
@@ -735,9 +735,11 @@ def page_classify():
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
                 # Appliquer la transformation du texte
+                st.write("Transformation du texte en cours...")
                 transformed_text = transform_text(user_input)
 
                 if transformed_text:  # Vérifier si la transformation a réussi
+                    st.write(f"Texte transformé : {transformed_text[:500]}...")  # Afficher un extrait du texte transformé (pour débogage)
                     data = [transformed_text]
                     vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
                     result = model.predict(vec)  # Prédire à l'aide du modèle chargé
