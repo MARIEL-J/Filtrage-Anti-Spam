@@ -601,7 +601,7 @@ def page_results():
 # Charger la fonction sérialisée
 try:
     with open("transformed_texts.pkl", "rb") as file:
-        transform_text = pickle.load(file)
+        transform_text = pickle.load(transformed_texts)
 except FileNotFoundError as e:
     st.error("La fonction de transformation n'a pas pu être chargée.")
     st.stop()
