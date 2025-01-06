@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 from bokeh.plotting import figure
 from bokeh.io import show
 from streamlit_option_menu import option_menu
+from nltk.corpus import stopwords
+import nltk
+from nltk.stem.porter import PorterStemmer
 
 
 #############################################
