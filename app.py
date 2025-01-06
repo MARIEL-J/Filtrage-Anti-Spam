@@ -15,6 +15,8 @@ from nltk.stem import PorterStemmer
 import string
 import logging
 
+nltk.download('punkt')
+nltk.download('stopwords')
 ps = PorterStemmer()
 
 try:
