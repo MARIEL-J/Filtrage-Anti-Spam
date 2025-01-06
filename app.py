@@ -601,15 +601,10 @@ def page_results():
 
 def page_classify():
     
-    pickle_file_path = "transformed_texts.pkl"
-
-    # Charger le fichier sérialisé
-    with open(pickle_file_path, "rb") as file:
-        transformed_texts = pickle.load(file)
-    
-    # Charger le modèle pré-entraîné et le vectoriseur
+    # Charger de la fonction de transformation, du modèle pré-entraîné et du vectoriseur
     try:
-        model = pickle.load(open('model.pkl', 'rb'))
+        transformed_texts = pickle.load(open('transformed_texts.pkl', 'rb'))
+        model = pickle.load(open('bnb_model.pkl', 'rb'))
         cv = pickle.load(open('vectorizer.pkl', 'rb'))
     except FileNotFoundError as e:
         st.error("Erreur lors du chargement du modèle ou du vectoriseur.")
