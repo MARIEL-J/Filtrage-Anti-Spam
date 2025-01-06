@@ -605,7 +605,7 @@ def page_classify():
 
     # Charger le fichier sérialisé
     with open(pickle_file_path, "rb") as file:
-    transformed_texts = pickle.load(file)
+        transformed_texts = pickle.load(file)
     
     # Charger le modèle pré-entraîné et le vectoriseur
     try:
