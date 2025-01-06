@@ -711,9 +711,6 @@ def page_classify():
     if classify_button:
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
-                nltk.download('punkt')
-                nltk.download('stopwords')
-                ps = PorterStemmer()
                 # Transformation du texte
                 transformed_input = transform_text(user_input)
                 
