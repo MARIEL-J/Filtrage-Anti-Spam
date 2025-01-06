@@ -652,7 +652,6 @@ def page_results():
 ###################################
 
 def page_classify():
-    # Configuration de l'application Streamlit
     st.markdown("""
     <style>
         .main-title {
@@ -699,19 +698,13 @@ def page_classify():
     </style>
     """, unsafe_allow_html=True)
 
-    # Titre principal
-    st.markdown('<div class="main-title">📧 Effectuez le filtrage anti-spam de vos mails </div>', unsafe_allow_html=True)
-
-    # Description
-    st.markdown('<div class="description"> Cette application utilise l\'apprentissage automatique pour déterminer si votre e-mail est <b>Spam</b> ou <b>Non Spam (Ham)</b>.</div>', unsafe_allow_html=True)
-
     # Zone de saisie pour l'utilisateur
     st.subheader("📥 Entrez le texte de l'e-mail")
     user_input = st.text_area("Entrez le texte de l'e-mail ci-dessous pour la classification :", height=150)
-
-    # Création du bouton pour lancer la classification
-    classify_button = st.button("Classer l'e-mail")
-
+    
+    # Bouton de classification personnalisé
+    classify_button = st.button("🔍 Classifier", key="classify_button", help="Cliquez ici pour classifier l'e-mail", use_container_width=True)
+    
     if classify_button:
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
@@ -722,7 +715,7 @@ def page_classify():
                     data = [transformed_input]
                     vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
                     result = model.predict(vec)  # Prédire à l'aide du modèle chargé
-
+    
                     # Afficher le résultat avec couleurs personnalisées
                     if result[0] == 0:
                         st.markdown('<div class="result-success">✅ Ce n\'est PAS un e-mail Spam !</div>', unsafe_allow_html=True)
