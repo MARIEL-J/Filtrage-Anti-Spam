@@ -701,6 +701,12 @@ def page_classify():
     </style>
     """, unsafe_allow_html=True)
 
+    # Titre principal
+    st.markdown('<div class="main-title">📧 Effectuez le filtrage anti-spam de vos mails </div>', unsafe_allow_html=True)
+
+    # Description
+    st.markdown('<div class="description"> Cette application utilise l\'apprentissage automatique pour déterminer si votre e-mail est <b>Spam</b> ou <b>Non Spam (Ham)</b>.</div>', unsafe_allow_html=True)
+
     # Zone de saisie pour l'utilisateur
     st.subheader("📥 Entrez le texte de l'e-mail")
     user_input = st.text_area("Entrez le texte de l'e-mail ci-dessous pour la classification :", height=150)
