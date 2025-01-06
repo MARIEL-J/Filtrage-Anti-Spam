@@ -717,9 +717,71 @@ def page_classify():
     st.subheader("📥 Entrez le texte de l'e-mail")
     user_input = st.text_area("Entrez le texte de l'e-mail ci-dessous pour la classification :", height=150)
 
+    import logging
+from googletrans import Translator
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+import string
+import streamlit as st
+
+# Configurer le logging
+logging.basicConfig(level=logging.DEBUG)
+
+ps = PorterStemmer()
+
+def transform_text(text):
+    try:
+        logging.debug("Début de la transformation du texte.")
+        
+        # Initialiser le traducteur
+        translator = Translator()
+        
+        # Détection de la langue
+        detected_lang = translator.detect(text).lang
+        logging.debug(f"Langue détectée : {detected_lang}")
+        
+        # Traduction en anglais si la langue détectée n'est pas l'anglais
+        if detected_lang != 'en':
+            text = translator.translate(text, src=detected_lang, dest='en').text
+            logging.debug(f"Texte traduit : {text}")
+        
+        # Conversion du texte en minuscules
+        text = text.lower()
+        logging.debug(f"Texte en minuscules : {text}")
+        
+        # Tokenisation du texte
+        text = nltk.word_tokenize(text)
+        logging.debug(f"Texte tokenisé : {text}")
+        
+        # Suppression des mots non alphanumériques
+        text = [word for word in text if word.isalnum()]
+        logging.debug(f"Texte après suppression des mots non alphanumériques : {text}")
+        
+        # Suppression des stopwords et de la ponctuation
+        stop_words = set(stopwords.words('english'))
+        text = [word for word in text if word not in stop_words and word not in string.punctuation]
+        logging.debug(f"Texte après suppression des stopwords et de la ponctuation : {text}")
+        
+        # Application du stemming
+        text = [ps.stem(word) for word in text]
+        logging.debug(f"Texte après stemming : {text}")
+        
+        # Retourner le texte transformé
+        transformed_text = " ".join(text)
+        logging.debug(f"Texte transformé final : {transformed_text}")
+        return transformed_text
+    
+    except Exception as e:
+        logging.error(f"Erreur lors du traitement : {e}")
+        return ""
+
+    # Interface Streamlit
+    user_input = st.text_area("Entrez le texte de l'e-mail ci-dessous pour la classification :", height=150)
+    
     # Bouton de classification personnalisé
     classify_button = st.button("🔍 Classifier", key="classify_button", help="Cliquez ici pour classifier l'e-mail", use_container_width=True)
-
+    
     if classify_button:
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
