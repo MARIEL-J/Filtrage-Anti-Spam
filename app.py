@@ -709,6 +709,9 @@ def page_classify():
     st.subheader("📥 Entrez le texte de l'e-mail")
     user_input = st.text_area("Entrez le texte de l'e-mail ci-dessous pour la classification :", height=150)
 
+    # Création du bouton pour lancer la classification
+    classify_button = st.button("Classer l'e-mail")
+
     if classify_button:
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
@@ -731,6 +734,7 @@ def page_classify():
                 st.error(f"Une erreur s'est produite lors de la classification : {e}")
         else:
             st.warning("⚠️ Veuillez entrer un texte d'e-mail avant de procéder à la classification.")
+
 
 
 
