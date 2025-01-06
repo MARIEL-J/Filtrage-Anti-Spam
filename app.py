@@ -719,19 +719,27 @@ def page_classify():
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
                 data = [user_input]
-                transformed_data = [transform_text(text) for text in data]
-                vec = cv.transform(transformed_data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
-                result = model.predict(vec)  # Prédire à l'aide du modèle chargé
-
-                # Afficher le résultat avec couleurs personnalisées
-                if result[0] == 0:
-                    st.markdown('<div class="result-success">✅ Ce n\'est PAS un e-mail Spam !</div>', unsafe_allow_html=True)
+                transformed_data = [transform_text(text) for text in data]  # Transformer l'entrée à l'aide de la fonction transform_text
+                
+                if not all(transformed_data):  # Vérifier si la transformation a réussi
+                    st.error("Erreur lors de la transformation du texte.")
                 else:
-                    st.markdown('<div class="result-error">🚨 C\'est un e-mail SPAM !</div>', unsafe_allow_html=True)
+                    logging.debug(f"Texte transformé pour vectorisation : {transformed_data}")
+                    vec = cv.transform(transformed_data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
+                    logging.debug(f"Vecteur transformé : {vec}")
+                    result = model.predict(vec)  # Prédire à l'aide du modèle chargé
+                    logging.debug(f"Résultat de la classification : {result}")
+    
+                    # Afficher le résultat avec couleurs personnalisées
+                    if result[0] == 0:
+                        st.markdown('<div class="result-success">✅ Ce n\'est PAS un e-mail Spam !</div>', unsafe_allow_html=True)
+                    else:
+                        st.markdown('<div class="result-error">🚨 C\'est un e-mail SPAM !</div>', unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"Une erreur s'est produite lors de la classification : {e}")
         else:
             st.warning("⚠️ Veuillez entrer un texte d'e-mail avant de procéder à la classification.")
+
 
 
 ######################################
