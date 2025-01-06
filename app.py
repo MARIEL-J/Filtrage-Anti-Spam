@@ -18,6 +18,73 @@ from nltk.stem.porter import PorterStemmer
 from langdetect import detect
 from deep_translator import GoogleTranslator
 
+#############################################
+## Fonction pour la transformation de text ##
+#############################################
+
+# Initialisation du stemmer
+ps = PorterStemmer()
+
+def transform_text(text):
+    """
+    Applique plusieurs étapes de prétraitement sur le texte fourni :
+    - Détecter la langue et traduire en anglais si nécessaire.
+    - Conversion en minuscules.
+    - Tokenisation (division du texte en mots).
+    - Suppression des mots non alphanumériques, stopwords et ponctuation.
+    - Application du stemming.
+
+    Args:
+    - text (str): Le texte à transformer.
+
+    Returns:
+    - str: Le texte transformé.
+    """
+    try:
+        # 0. Détection et traduction si le texte n'est pas en anglais
+        language = detect(text)
+        if language != "en":
+            if len(text) > 5000:  # Gestion des textes longs
+                parts = [text[i:i + 5000] for i in range(0, len(text), 5000)]
+                try:
+                    translated_parts = [
+                        GoogleTranslator(source='auto', target='en').translate(part)
+                        for part in parts
+                    ]
+                    text = " ".join(translated_parts)
+                except Exception as e:
+                    print(f"Erreur lors de la traduction d'une partie du texte : {e}")
+                    return None
+            else:
+                try:
+                    text = GoogleTranslator(source='auto', target='en').translate(text)
+                except Exception as e:
+                    print(f"Erreur lors de la traduction : {e}")
+                    return None
+
+        # 1. Conversion du texte en minuscules
+        text = text.lower()
+        
+        # 2. Tokenisation du texte
+        text = nltk.word_tokenize(text)
+        
+        # 3. Suppression des mots non alphanumériques
+        text = [word for word in text if word.isalnum()]
+        
+        # 4. Suppression des stopwords et de la ponctuation
+        stop_words = set(stopwords.words('english'))
+        text = [word for word in text if word not in stop_words and word not in string.punctuation]
+        
+        # 5. Application du stemming
+        text = [ps.stem(word) for word in text]
+        
+        # 6. Retourner le texte transformé
+        return " ".join(text)
+    
+    except Exception as e:
+        print(f"Erreur lors du traitement : {e}")
+        return None
+
 st.set_page_config(
     page_title='Spamvanished by Jacquelin & Féridia',
     page_icon="icone.jpg")
@@ -117,13 +184,11 @@ def main():
         page_classify()
     elif selected == "Équipe de Développement":
         page_team()
-
+    
 
 #################
 ## Page 'Home' ##
 #################
-
-import streamlit as st
 
 def page_home(): 
     # Titre principal avec styles personnalisés
@@ -600,10 +665,9 @@ def page_results():
 
 
 def page_classify():
-    
-    # Charger de la fonction de transformation, du modèle pré-entraîné et du vectoriseur
+        
+    # Charger du modèle pré-entraîné et du vectoriseur
     try:
-        transformed_texts = pickle.load(open('transformed_texts.pkl', 'rb'))
         model = pickle.load(open('bnb_model.pkl', 'rb'))
         cv = pickle.load(open('vectorizer.pkl', 'rb'))
     except FileNotFoundError as e:
