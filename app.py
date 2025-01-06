@@ -1,4 +1,4 @@
-import os
+import os                                                                       
 import streamlit as st
 import pickle
 import pandas as pd
@@ -8,66 +8,7 @@ import matplotlib.pyplot as plt
 from bokeh.plotting import figure
 from bokeh.io import show
 from streamlit_option_menu import option_menu
-from nltk.corpus import stopwords
-import nltk
-from nltk.stem.porter import PorterStemmer
 
-
-#############################################
-## Fonction pour la transformation de text ##
-#############################################
-
-
-def transform_text(text):
-    """
-    Cette fonction applique plusieurs étapes de prétraitement sur le texte fourni :
-    - conversion en minuscules
-    - tokenisation (division du texte en mots)
-    - suppression des mots non-alphanumériques (émojis, @, $, ...)
-    - filtrage des mots vides (stopwords) et de la ponctuation 
-    - stemming des mots restants
-
-    Args:
-    - text (str) : Le texte à transformer.
-
-    Returns:
-    - str : Le texte transformé après le prétraitement.
-    """
-    
-    # 1. Conversion du texte en minuscules
-    text = text.lower()
-    
-    # 2. Tokenisation du texte en mots individuels
-    text = nltk.word_tokenize(text)
-    
-    # Liste temporaire pour stocker les mots valides (alphanumériques uniquement)
-    y = []
-    
-    # 3. Suppression des mots non alphanumériques
-    for i in text:
-        if i.isalnum():
-            y.append(i)
-    
-    # Mise à jour du texte après suppression des éléments non alphanumériques
-    text = y[:]
-    y.clear()  # Réinitialisation de la liste temporaire
-    
-    # 4. Suppression des stopwords et de la ponctuation
-    for i in text:
-        if i not in stopwords.words('english') and i not in string.punctuation:
-            y.append(i)
-    
-    # Mise à jour du texte après suppression des stopwords et de la ponctuation
-    text = y[:]
-    y.clear()  # Réinitialisation de la liste temporaire
-    
-    # 5. Application du stemming
-    for i in text:
-        y.append(ps.stem(i))
-    
-    # 6. Retourner le texte transformé sous forme de chaîne
-    return " ".join(y)
-        
 st.set_page_config(
     page_title='Spamvanished by Jacquelin & Féridia',
     page_icon="icone.jpg")
@@ -167,11 +108,13 @@ def main():
         page_classify()
     elif selected == "Équipe de Développement":
         page_team()
-    
+
 
 #################
 ## Page 'Home' ##
 #################
+
+import streamlit as st
 
 def page_home(): 
     # Titre principal avec styles personnalisés
@@ -645,16 +588,13 @@ def page_results():
 ## Section "Classifier son mail" ##
 ###################################
 
-
-
 def page_classify():
-        
-    # Charger du modèle pré-entraîné et du vectoriseur
+    # Charger le modèle pré-entraîné et le vectoriseur
     try:
         model = pickle.load(open('model.pkl', 'rb'))
         cv = pickle.load(open('vectorizer.pkl', 'rb'))
     except FileNotFoundError as e:
-        st.error("Erreur lors du chargement du modèle ou du vectoriseur.")
+        st.error("Erreur lors du chargement du modèle ou du vectoriseur. Veuillez vous assurer que les fichiers 'spam.pkl' et 'vectorizer.pkl' sont présents.")
         st.stop()
 
     # Configuration de l'application Streamlit
@@ -720,11 +660,7 @@ def page_classify():
     if classify_button:
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
-                # Appliquer la fonction de transformation du texte chargée depuis le fichier pkl
-                transformed_input = transform_text(user_input)
- 
-                # Transformer l'entrée à l'aide du vectoriseur
-                data = [transformed_input]  # Utiliser le texte transformé
+                data = [user_input]
                 vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
                 result = model.predict(vec)  # Prédire à l'aide du modèle chargé
 
