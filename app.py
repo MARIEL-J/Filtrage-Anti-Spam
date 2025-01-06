@@ -652,7 +652,6 @@ def page_results():
 ###################################
 
 def page_classify():
-    
     # Configuration de l'application Streamlit
     st.markdown("""
     <style>
@@ -720,7 +719,7 @@ def page_classify():
                     data = [transformed_input]
                     vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
                     result = model.predict(vec)  # Prédire à l'aide du modèle chargé
-    
+
                     # Afficher le résultat avec couleurs personnalisées
                     if result[0] == 0:
                         st.markdown('<div class="result-success">✅ Ce n\'est PAS un e-mail Spam !</div>', unsafe_allow_html=True)
