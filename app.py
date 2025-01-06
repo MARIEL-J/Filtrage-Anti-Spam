@@ -14,8 +14,6 @@ from streamlit_option_menu import option_menu
 ## Fonction pour la transformation de text ##
 #############################################
 
-# Initialisation du stemmer
-ps = PorterStemmer()
 
 def transform_text(text):
     """
