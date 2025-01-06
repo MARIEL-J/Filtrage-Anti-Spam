@@ -84,7 +84,7 @@ def transform_text(text):
     except Exception as e:
         print(f"Erreur lors du traitement : {e}")
         return None
-
+        
 st.set_page_config(
     page_title='Spamvanished by Jacquelin & Féridia',
     page_icon="icone.jpg")
