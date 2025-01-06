@@ -23,13 +23,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 ps = PorterStemmer()
 
-    # Charger le modèle pré-entraîné et le vectoriseur
-    try:
-        model = pickle.load(open('model.pkl', 'rb'))
-        cv = pickle.load(open('vectorizer.pkl', 'rb'))
-    except FileNotFoundError as e:
-        st.error("Erreur lors du chargement du modèle ou du vectoriseur. Veuillez vous assurer que les fichiers 'spam.pkl' et 'vectorizer.pkl' sont présents.")
-        st.stop()
+# Charger le modèle pré-entraîné et le vectoriseur
+try:
+    model = pickle.load(open('model.pkl', 'rb'))
+    cv = pickle.load(open('vectorizer.pkl', 'rb'))
+except FileNotFoundError as e:
+    st.error("Erreur lors du chargement du modèle ou du vectoriseur. Veuillez vous assurer que les fichiers 'spam.pkl' et 'vectorizer.pkl' sont présents.")
+    st.stop()
 
 def transform_text(text):
     try:
