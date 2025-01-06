@@ -8,6 +8,64 @@ import matplotlib.pyplot as plt
 from bokeh.plotting import figure
 from bokeh.io import show
 from streamlit_option_menu import option_menu
+from googletrans import Translator
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+import string
+
+ps = PorterStemmer()
+
+def transform_text(text):
+    """
+    Applique plusieurs étapes de prétraitement sur le texte fourni :
+   
+    - Détection de la langue et traduction en anglais si nécessaire.
+    - Conversion en minuscules.
+    - Tokenisation (division du texte en mots).
+    - Suppression des mots non alphanumériques, stopwords et ponctuation.
+    - Application du stemming.
+
+    Args:
+    - text (str): Le texte à transformer.
+
+    Returns:
+    - str: Le texte transformé.
+    """
+    try:
+        # Initialiser le traducteur
+        translator = Translator()
+        
+        # Détection de la langue
+        detected_lang = translator.detect(text).lang
+        
+        # Traduction en anglais si la langue détectée n'est pas l'anglais
+        if detected_lang != 'en':
+            text = translator.translate(text, src=detected_lang, dest='en').text
+        
+        # 1. Conversion du texte en minuscules
+        text = text.lower()
+        
+        # 2. Tokenisation du texte
+        text = nltk.word_tokenize(text)
+        
+        # 3. Suppression des mots non alphanumériques
+        text = [word for word in text if word.isalnum()]
+        
+        # 4. Suppression des stopwords et de la ponctuation
+        stop_words = set(stopwords.words('english'))
+        text = [word for word in text if word not in stop_words and word not in string.punctuation]
+        
+        # 5. Application du stemming
+        text = [ps.stem(word) for word in text]
+        
+        # 6. Retourner le texte transformé
+        return " ".join(text)
+    
+    except Exception as e:
+        print(f"Erreur lors du traitement : {e}")
+        return None
+
 
 st.set_page_config(
     page_title='Spamvanished by Jacquelin & Féridia',
@@ -661,6 +719,7 @@ def page_classify():
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
                 data = [user_input]
+                data = transform_text(data) 
                 vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
                 result = model.predict(vec)  # Prédire à l'aide du modèle chargé
 
