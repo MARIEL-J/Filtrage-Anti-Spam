@@ -40,28 +40,6 @@ def transform_text(text):
     Returns:
     - str: Le texte transformé.
     """
-    try:
-        # 0. Détection et traduction si le texte n'est pas en anglais
-        language = detect(text)
-        if language != "en":
-            if len(text) > 5000:  # Gestion des textes longs
-                parts = [text[i:i + 5000] for i in range(0, len(text), 5000)]
-                try:
-                    translated_parts = [
-                        GoogleTranslator(source='auto', target='en').translate(part)
-                        for part in parts
-                    ]
-                    text = " ".join(translated_parts)
-                except Exception as e:
-                    print(f"Erreur lors de la traduction d'une partie du texte : {e}")
-                    return None
-            else:
-                try:
-                    text = GoogleTranslator(source='auto', target='en').translate(text)
-                except Exception as e:
-                    print(f"Erreur lors de la traduction : {e}")
-                    return None
-
         # 1. Conversion du texte en minuscules
         text = text.lower()
         
@@ -739,7 +717,7 @@ def page_classify():
             try:
                 # Appliquer la fonction de transformation du texte chargée depuis le fichier pkl
                 transformed_input = transform_text(user_input)
-
+ 
                 # Transformer l'entrée à l'aide du vectoriseur
                 data = [transformed_input]  # Utiliser le texte transformé
                 vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
