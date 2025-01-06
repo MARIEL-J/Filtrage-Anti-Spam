@@ -27,41 +27,53 @@ ps = PorterStemmer()
 
 def transform_text(text):
     """
-    Applique plusieurs étapes de prétraitement sur le texte fourni :
-    - Détecter la langue et traduire en anglais si nécessaire.
-    - Conversion en minuscules.
-    - Tokenisation (division du texte en mots).
-    - Suppression des mots non alphanumériques, stopwords et ponctuation.
-    - Application du stemming.
+    Cette fonction applique plusieurs étapes de prétraitement sur le texte fourni :
+    - conversion en minuscules
+    - tokenisation (division du texte en mots)
+    - suppression des mots non-alphanumériques (émojis, @, $, ...)
+    - filtrage des mots vides (stopwords) et de la ponctuation 
+    - stemming des mots restants
 
     Args:
-    - text (str): Le texte à transformer.
+    - text (str) : Le texte à transformer.
 
     Returns:
-    - str: Le texte transformé.
+    - str : Le texte transformé après le prétraitement.
     """
-        # 1. Conversion du texte en minuscules
-        text = text.lower()
-        
-        # 2. Tokenisation du texte
-        text = nltk.word_tokenize(text)
-        
-        # 3. Suppression des mots non alphanumériques
-        text = [word for word in text if word.isalnum()]
-        
-        # 4. Suppression des stopwords et de la ponctuation
-        stop_words = set(stopwords.words('english'))
-        text = [word for word in text if word not in stop_words and word not in string.punctuation]
-        
-        # 5. Application du stemming
-        text = [ps.stem(word) for word in text]
-        
-        # 6. Retourner le texte transformé
-        return " ".join(text)
     
-    except Exception as e:
-        print(f"Erreur lors du traitement : {e}")
-        return None
+    # 1. Conversion du texte en minuscules
+    text = text.lower()
+    
+    # 2. Tokenisation du texte en mots individuels
+    text = nltk.word_tokenize(text)
+    
+    # Liste temporaire pour stocker les mots valides (alphanumériques uniquement)
+    y = []
+    
+    # 3. Suppression des mots non alphanumériques
+    for i in text:
+        if i.isalnum():
+            y.append(i)
+    
+    # Mise à jour du texte après suppression des éléments non alphanumériques
+    text = y[:]
+    y.clear()  # Réinitialisation de la liste temporaire
+    
+    # 4. Suppression des stopwords et de la ponctuation
+    for i in text:
+        if i not in stopwords.words('english') and i not in string.punctuation:
+            y.append(i)
+    
+    # Mise à jour du texte après suppression des stopwords et de la ponctuation
+    text = y[:]
+    y.clear()  # Réinitialisation de la liste temporaire
+    
+    # 5. Application du stemming
+    for i in text:
+        y.append(ps.stem(i))
+    
+    # 6. Retourner le texte transformé sous forme de chaîne
+    return " ".join(y)
         
 st.set_page_config(
     page_title='Spamvanished by Jacquelin & Féridia',
