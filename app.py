@@ -9,14 +9,6 @@ from bokeh.plotting import figure
 from bokeh.io import show
 from streamlit_option_menu import option_menu
 
-import nltk
-nltk.download('punkt')  # Télécharge la ressource de tokenisation
-nltk.download('stopwords')
-from nltk.corpus import stopwords
-import string
-from nltk.stem.porter import PorterStemmer
-from langdetect import detect
-from deep_translator import GoogleTranslator
 
 #############################################
 ## Fonction pour la transformation de text ##
