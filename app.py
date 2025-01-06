@@ -28,21 +28,7 @@ except FileNotFoundError as e:
 
 # Fonction de transformation du texte
 def transform_text(text):
-    try:
-        logging.debug("Début de la transformation du texte.")
-        
-        # Initialiser le traducteur
-        translator = Translator()
-        
-        # Détection de la langue
-        detected_lang = translator.detect(text).lang
-        logging.debug(f"Langue détectée : {detected_lang}")
-        
-        # Traduction en anglais si la langue détectée n'est pas l'anglais
-        if detected_lang != 'en':
-            text = translator.translate(text, src=detected_lang, dest='en').text
-            logging.debug(f"Texte traduit : {text}")
-        
+    try:        
         # Conversion du texte en minuscules
         text = text.lower()
         logging.debug(f"Texte en minuscules : {text}")
