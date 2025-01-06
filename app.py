@@ -668,7 +668,7 @@ def page_classify():
         
     # Charger du modèle pré-entraîné et du vectoriseur
     try:
-        model = pickle.load(open('bnb_model.pkl', 'rb'))
+        model = pickle.load(open('model.pkl', 'rb'))
         cv = pickle.load(open('vectorizer.pkl', 'rb'))
     except FileNotFoundError as e:
         st.error("Erreur lors du chargement du modèle ou du vectoriseur.")
