@@ -719,8 +719,8 @@ def page_classify():
         if user_input.strip():  # Vérifier si l'entrée n'est pas vide
             try:
                 data = [user_input]
-                data = transform_text(data) 
-                vec = cv.transform(data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
+                transformed_data = [transform_text(text) for text in data]
+                vec = cv.transform(transformed_data).toarray()  # Transformer l'entrée à l'aide du vectoriseur
                 result = model.predict(vec)  # Prédire à l'aide du modèle chargé
 
                 # Afficher le résultat avec couleurs personnalisées
