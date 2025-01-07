@@ -467,9 +467,9 @@ def page_procedure():
     2. **Analyse Exploratoire des Données (EDA)** :
        - Analyse univariée : Étudier les distributions de chaque variable.
        - Analyse bivariée : Identifier les relations entre les variables.
-       - Tokenisation : Conversion des textes en tokens pour pouvoir les traiter par les modèles.
 
     3. **Prétraitement et Transformation du Texte** :
+       - Tokenisation : Conversion des textes en tokens pour pouvoir les traiter par les modèles.
        - Nettoyage des textes : Suppression des caractères spéciaux, conversion en minuscules, etc.
        - Utilisation de la bibliothèque NLTK pour effectuer le prétraitement (lemmatisation, suppression des stopwords).
 
