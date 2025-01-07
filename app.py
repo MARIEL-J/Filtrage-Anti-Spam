@@ -211,7 +211,7 @@ def page_home():
         }
         </style>
         <div class="main-title">Spamvanished, le bouclier ultime pour le filtrage anti-spam</div>
-        <div class="sub-title">La seule solution pour sécuriser vos e-mails en temps réel !</div>
+        <div class="sub-title">La solution pour sécuriser vos e-mails en temps réel !</div>
     """, unsafe_allow_html=True)
 
     # Image illustrative
